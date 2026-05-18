@@ -15,22 +15,27 @@ declare_id!("5yfhPSsqiQC3Sqvvf6JaG6sGVNj4CUEmnoWJdCzWfWWA");
 pub mod vault_program {
     use super::*;
 
-    // Initilize Vault with authority
+    // Keep the entrypoints thin: the account structs hold the validation rules,
+    // and the helper methods below hold the business logic.
+
+    // Create the vault state PDA and remember which wallet owns it.
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         ctx.accounts.initialize(&ctx.bumps)
     }
 
-    // Despositting given amount of sol in vault
+    // Move lamports from any signer into the vault PDA.
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         ctx.accounts.deposit(amount)
     }
 
-    // Withdrawing sol from vault
+    // Withdraw lamports back to the recorded authority, but only if the vault
+    // keeps enough lamports to remain rent exempt.
     pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
         ctx.accounts.withdraw(amount)
     }
 
-    // Closing the account and returing all lamports to the authority
+    // Drain the vault and close the state account, returning the remaining
+    // lamports to the authority.
     pub fn close(ctx: Context<Close>) -> Result<()> {
         ctx.accounts.close()
     }

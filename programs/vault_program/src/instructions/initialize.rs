@@ -29,6 +29,8 @@ pub struct Initialize<'info> {
 
 impl<'info> Initialize<'info> {
     pub fn initialize(&mut self, bumps: &InitializeBumps) -> Result<()> {
+        // Store the authority and both PDA bumps so future instructions can
+        // validate the same addresses without recomputing new ones.
         self.vault_state.authority = self.authority.key();
         self.vault_state.state_bump = bumps.vault_state;
         self.vault_state.vault_bump = bumps.vault;
